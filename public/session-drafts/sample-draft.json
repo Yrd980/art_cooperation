@@ -1,0 +1,169 @@
+{
+  "contestants": [
+    {
+      "id": "jade",
+      "name": "Jade Current",
+      "motif": "Glass Harbor",
+      "personaPrompt": "把潮湿码头写成一片带电的镜面。",
+      "poem": "玻璃港把灯塔拆成更细的反光\n潮声在金属边缘留下第二种回音\n夜色被拖成缓慢滑行的蓝线",
+      "drawingPrompt": "先铺冷色港面，再用折线高光和白点把反射拉长。",
+      "paletteBias": [1, 2, 7, 14]
+    },
+    {
+      "id": "ember",
+      "name": "Ember Vale",
+      "motif": "Furnace Crowd",
+      "personaPrompt": "把人群热度写成中心升温的火色团簇。",
+      "poem": "人声把炉口推到更亮的位置\n橙色从肩膀一路烧进场馆中央\n每一次挥手都像添了一把风",
+      "drawingPrompt": "把暖色热核压进中段，并向外释放尾焰。",
+      "paletteBias": [8, 10, 11, 12]
+    },
+    {
+      "id": "mist",
+      "name": "Mist Ledger",
+      "motif": "Blueprint Rows",
+      "personaPrompt": "让画面像被冷静测量过的结构图。",
+      "poem": "蓝图把空白切成一排排台阶\n线与线之间留着足够安静的距离\n所有噪声都被归档到边缘",
+      "drawingPrompt": "用水平层与切线轮廓把空间重新整理。",
+      "paletteBias": [1, 4, 5, 13]
+    },
+    {
+      "id": "nova",
+      "name": "Nova Thread",
+      "motif": "Echo Ceiling",
+      "personaPrompt": "让结尾像高处残留的闪烁还在继续。",
+      "poem": "天花板最后一次把光撒回人群\n几颗亮点停在黑暗最薄的地方\n余像比掌声更晚退场",
+      "drawingPrompt": "补离散星点、十字高光和轻微尾迹，让画面停在发亮回声里。",
+      "paletteBias": [0, 7, 14, 15]
+    }
+  ],
+  "turns": [
+    {
+      "id": "external-jade-foundation",
+      "turnIndex": 0,
+      "contestantId": "jade",
+      "phase": "foundation",
+      "promptSummary": "Jade Current 先把港面反光铺进底色",
+      "strategySummary": "从「玻璃港把灯塔拆成更细的反光」提取横向冷亮反射，让底部先出现镜面流动。",
+      "sourceFragments": ["玻璃港把灯塔拆成更细的反光", "先铺冷色港面"],
+      "shapeLanguage": "横向港面反射与白色折光",
+      "coverage": 48,
+      "ops": [
+        { "x": 2, "y": 12, "color": 2 }, { "x": 3, "y": 12, "color": 7 }, { "x": 4, "y": 12, "color": 14 }, { "x": 5, "y": 12, "color": 2 },
+        { "x": 8, "y": 13, "color": 2 }, { "x": 9, "y": 13, "color": 7 }, { "x": 10, "y": 13, "color": 14 }, { "x": 11, "y": 13, "color": 2 },
+        { "x": 14, "y": 14, "color": 2 }, { "x": 15, "y": 14, "color": 7 }, { "x": 16, "y": 14, "color": 14 }, { "x": 17, "y": 14, "color": 2 }
+      ]
+    },
+    {
+      "id": "external-jade-detail",
+      "turnIndex": 1,
+      "contestantId": "jade",
+      "phase": "detail",
+      "promptSummary": "Jade Current 拉长港面折光",
+      "strategySummary": "从「夜色被拖成缓慢滑行的蓝线」提取细长高光，在港面上拖出第二层白蓝折线。",
+      "sourceFragments": ["夜色被拖成缓慢滑行的蓝线", "用折线高光和白点把反射拉长"],
+      "shapeLanguage": "折线高光与慢滑蓝线",
+      "coverage": 24,
+      "ops": [
+        { "x": 6, "y": 11, "color": 15 }, { "x": 7, "y": 12, "color": 14 }, { "x": 8, "y": 13, "color": 15 }, { "x": 9, "y": 14, "color": 14 },
+        { "x": 18, "y": 12, "color": 15 }, { "x": 19, "y": 13, "color": 14 }, { "x": 20, "y": 14, "color": 15 }, { "x": 21, "y": 15, "color": 14 }
+      ]
+    },
+    {
+      "id": "external-ember-foundation",
+      "turnIndex": 2,
+      "contestantId": "ember",
+      "phase": "foundation",
+      "promptSummary": "Ember Vale 在中段压出炉口热核",
+      "strategySummary": "从「人声把炉口推到更亮的位置」提取中心升温结构，让画面中部形成高热核心。",
+      "sourceFragments": ["人声把炉口推到更亮的位置", "把暖色热核压进中段"],
+      "shapeLanguage": "中心热核与外扩火色",
+      "coverage": 42,
+      "ops": [
+        { "x": 12, "y": 9, "color": 10 }, { "x": 13, "y": 9, "color": 11 }, { "x": 14, "y": 9, "color": 12 }, { "x": 15, "y": 9, "color": 11 },
+        { "x": 11, "y": 10, "color": 10 }, { "x": 12, "y": 10, "color": 11 }, { "x": 13, "y": 10, "color": 12 }, { "x": 14, "y": 10, "color": 12 },
+        { "x": 15, "y": 10, "color": 11 }, { "x": 16, "y": 10, "color": 10 }
+      ]
+    },
+    {
+      "id": "external-ember-detail",
+      "turnIndex": 3,
+      "contestantId": "ember",
+      "phase": "detail",
+      "promptSummary": "Ember Vale 扩散尾焰",
+      "strategySummary": "从「每一次挥手都像添了一把风」提取向外拉开的火色尾焰，把热量从中心推出去。",
+      "sourceFragments": ["每一次挥手都像添了一把风", "并向外释放尾焰"],
+      "shapeLanguage": "左右扩散的火色尾焰",
+      "coverage": 26,
+      "ops": [
+        { "x": 9, "y": 10, "color": 8 }, { "x": 10, "y": 10, "color": 10 }, { "x": 17, "y": 10, "color": 10 }, { "x": 18, "y": 10, "color": 8 },
+        { "x": 10, "y": 12, "color": 11 }, { "x": 17, "y": 12, "color": 11 }
+      ]
+    },
+    {
+      "id": "external-mist-foundation",
+      "turnIndex": 4,
+      "contestantId": "mist",
+      "phase": "foundation",
+      "promptSummary": "Mist Ledger 建立蓝图分层",
+      "strategySummary": "从「蓝图把空白切成一排排台阶」提取水平层带，把后段压成结构化背景。",
+      "sourceFragments": ["蓝图把空白切成一排排台阶", "用水平层与切线轮廓把空间重新整理"],
+      "shapeLanguage": "分层台阶与蓝图边界",
+      "coverage": 36,
+      "ops": [
+        { "x": 3, "y": 18, "color": 13 }, { "x": 4, "y": 18, "color": 5 }, { "x": 5, "y": 18, "color": 4 }, { "x": 6, "y": 18, "color": 13 },
+        { "x": 9, "y": 20, "color": 13 }, { "x": 10, "y": 20, "color": 5 }, { "x": 11, "y": 20, "color": 4 }, { "x": 12, "y": 20, "color": 13 }
+      ]
+    },
+    {
+      "id": "external-mist-detail",
+      "turnIndex": 5,
+      "contestantId": "mist",
+      "phase": "detail",
+      "promptSummary": "Mist Ledger 补蓝图切线",
+      "strategySummary": "从「所有噪声都被归档到边缘」提取冷白切线，在后景追加秩序收边。",
+      "sourceFragments": ["所有噪声都被归档到边缘", "切线轮廓"],
+      "shapeLanguage": "冷白切线与归档边界",
+      "coverage": 20,
+      "ops": [
+        { "x": 7, "y": 17, "color": 15 }, { "x": 8, "y": 18, "color": 15 }, { "x": 9, "y": 19, "color": 15 }, { "x": 10, "y": 20, "color": 15 },
+        { "x": 18, "y": 18, "color": 15 }, { "x": 17, "y": 19, "color": 15 }, { "x": 16, "y": 20, "color": 15 }
+      ]
+    },
+    {
+      "id": "external-nova-foundation",
+      "turnIndex": 6,
+      "contestantId": "nova",
+      "phase": "foundation",
+      "promptSummary": "Nova Thread 撒下高处闪点",
+      "strategySummary": "从「几颗亮点停在黑暗最薄的地方」提取离散星点，让顶区先出现稀疏余像。",
+      "sourceFragments": ["几颗亮点停在黑暗最薄的地方", "补离散星点"],
+      "shapeLanguage": "高处稀疏闪点",
+      "coverage": 22,
+      "ops": [
+        { "x": 5, "y": 3, "color": 15 }, { "x": 10, "y": 4, "color": 14 }, { "x": 15, "y": 2, "color": 15 }, { "x": 20, "y": 5, "color": 14 }, { "x": 25, "y": 3, "color": 15 }
+      ]
+    },
+    {
+      "id": "external-nova-detail",
+      "turnIndex": 7,
+      "contestantId": "nova",
+      "phase": "detail",
+      "promptSummary": "Nova Thread 用十字高光收尾",
+      "strategySummary": "从「余像比掌声更晚退场」提取十字高光和停留尾迹，让最后一回合停在高处发亮回声里。",
+      "sourceFragments": ["余像比掌声更晚退场", "十字高光和轻微尾迹"],
+      "shapeLanguage": "十字高光与停留尾迹",
+      "coverage": 18,
+      "ops": [
+        { "x": 12, "y": 4, "color": 15 }, { "x": 12, "y": 3, "color": 15 }, { "x": 12, "y": 5, "color": 15 }, { "x": 11, "y": 4, "color": 15 }, { "x": 13, "y": 4, "color": 15 },
+        { "x": 22, "y": 5, "color": 15 }, { "x": 22, "y": 4, "color": 15 }, { "x": 22, "y": 6, "color": 15 }, { "x": 21, "y": 5, "color": 15 }, { "x": 23, "y": 5, "color": 15 }
+      ]
+    }
+  ],
+  "meta": {
+    "providerId": "draft",
+    "providerLabel": "External Draft JSON",
+    "mode": "draft",
+    "sourceLabel": "/session-drafts/sample-draft.json"
+  }
+}
