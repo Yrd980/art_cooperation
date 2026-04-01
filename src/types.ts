@@ -16,6 +16,7 @@ export type SessionMode =
   | 'draft'
   | 'local-openclaw'
   | 'remote-openclaw'
+  | 'deepseek'
 
 export type SessionOrigin = {
   providerId: string
@@ -161,3 +162,30 @@ export type SessionDraftSaveResponse = SessionDraftSaveSuccess | SessionDraftSav
 export type StaticContestantRoster = {
   contestants: StaticContestantSeed[]
 }
+
+export type DeepSeekTurnResponse = {
+  ops: PixelOp[]
+  promptSummary: string
+  strategySummary: string
+  responseSummary: string
+  shapeLanguage: string
+  focusArea: string
+  collaborationRole: CollaborationRole
+}
+
+export type DeepSeekSessionRequest = {
+  contestants: StaticContestantSeed[]
+}
+
+export type DeepSeekSessionSuccess = {
+  ok: true
+  session: CoCreationSession
+}
+
+export type DeepSeekSessionError = {
+  ok: false
+  code: string
+  message: string
+}
+
+export type DeepSeekSessionResponse = DeepSeekSessionSuccess | DeepSeekSessionError

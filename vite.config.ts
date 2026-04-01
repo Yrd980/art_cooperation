@@ -20,13 +20,24 @@ import {
   resolveLocalOpenClawRunId,
 } from './src/lib/localOpenClaw'
 import {
+  DEEPSEEK_SESSION_ENDPOINT,
+  buildDeepSeekSystemPrompt,
+  buildDeepSeekTurnPrompt,
+  buildDeepSeekSession,
+  gridToHex,
+  parseDeepSeekTurnResponse,
+} from './src/lib/deepseek'
+import {
   buildDraftExportSession,
   buildGeneratedDraftFilename,
   buildGeneratedDraftUrl,
   SESSION_DRAFT_SAVE_ENDPOINT,
   validateGeneratedDraftFilename,
 } from './src/lib/sessionDraftExport'
+import { CANVAS_SIZE } from './src/lib/art'
 import type {
+  DeepSeekSessionResponse,
+  DeepSeekTurnResponse,
   LocalOpenClawBridgeRequest,
   LocalOpenClawBridgeResponse,
   LocalOpenClawHealthResponse,
@@ -35,17 +46,22 @@ import type {
   SessionDraftSaveError,
   SessionDraftSaveRequest,
   SessionDraftSaveResponse,
+  TurnPhase,
 } from './src/types'
 
 const execFileAsync = promisify(execFile)
 const OPENCLAW_HEALTH_TIMEOUT_MS = 5_000
 const OPENCLAW_CONFIG_TIMEOUT_MS = 5_000
 const OPENCLAW_AGENT_TIMEOUT_MS = 65_000
+const DEEPSEEK_API_BASE = 'https://api.deepseek.com'
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY ?? 'sk-99c36f63d4f14aca996f890a81424d84'
+const DEEPSEEK_MODEL = 'deepseek-chat'
+const DEEPSEEK_TURN_TIMEOUT_MS = 60_000
 const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 const generatedDraftDirectoryPath = path.join(projectRoot, 'public', 'session-drafts', 'generated')
 
 export default defineConfig({
-  plugins: [react(), localOpenClawBridgePlugin()],
+  plugins: [react(), localOpenClawBridgePlugin(), deepseekBridgePlugin()],
 })
 
 function localOpenClawBridgePlugin(): Plugin {
@@ -58,6 +74,145 @@ function localOpenClawBridgePlugin(): Plugin {
       })
     },
   }
+}
+
+function deepseekBridgePlugin(): Plugin {
+  return {
+    name: 'deepseek-bridge',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        void handleDeepSeekBridgeRequest(req, res, next)
+      })
+    },
+  }
+}
+
+async function handleDeepSeekBridgeRequest(
+  req: IncomingMessage,
+  res: ServerResponse,
+  next: () => void,
+) {
+  if (!req.url) {
+    next()
+    return
+  }
+
+  try {
+    const url = new URL(req.url, 'http://127.0.0.1')
+
+    if (req.method === 'POST' && url.pathname === DEEPSEEK_SESSION_ENDPOINT) {
+      const body = await readJsonBody(req)
+      if (!body.ok) {
+        sendJson(res, 400, { ok: false, code: 'bad_request', message: body.message } satisfies DeepSeekSessionResponse)
+        return
+      }
+
+      const response = await buildDeepSeekSessionResponse(body.value)
+      sendJson(res, response.ok ? 200 : 500, response)
+      return
+    }
+
+    next()
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unhandled DeepSeek bridge error'
+    sendJson(res, 500, { ok: false, code: 'deepseek_unhandled', message } satisfies DeepSeekSessionResponse)
+  }
+}
+
+async function buildDeepSeekSessionResponse(body: unknown): Promise<DeepSeekSessionResponse> {
+  if (!isDeepSeekSessionRequest(body)) {
+    return { ok: false, code: 'bad_request', message: 'Invalid DeepSeek session request body' }
+  }
+
+  const phases: TurnPhase[] = ['foundation', 'detail']
+  const systemPrompt = buildDeepSeekSystemPrompt()
+  const grid = Array.from({ length: CANVAS_SIZE * CANVAS_SIZE }, () => 0)
+  const turnResults: DeepSeekTurnResponse[] = []
+
+  for (const [contestantIndex, contestant] of body.contestants.entries()) {
+    for (const [phaseIndex, phase] of phases.entries()) {
+      const turnIndex = contestantIndex * phases.length + phaseIndex
+      const canvasHex = gridToHex(grid)
+      const userPrompt = buildDeepSeekTurnPrompt(
+        contestant,
+        phase,
+        turnIndex,
+        body.contestants.length,
+        canvasHex,
+      )
+
+      try {
+        const turnResponse = await callDeepSeekChat(systemPrompt, userPrompt)
+        const parsed = parseDeepSeekTurnResponse(turnResponse)
+        turnResults.push(parsed)
+
+        for (const op of parsed.ops) {
+          grid[op.y * CANVAS_SIZE + op.x] = op.color
+        }
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : 'unknown'
+        return {
+          ok: false,
+          code: 'deepseek_turn_failed',
+          message: `Turn ${turnIndex} (${contestant.name} / ${phase}) failed: ${detail}`,
+        }
+      }
+    }
+  }
+
+  const session = buildDeepSeekSession(body.contestants, turnResults)
+  return { ok: true, session }
+}
+
+async function callDeepSeekChat(systemPrompt: string, userPrompt: string): Promise<string> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), DEEPSEEK_TURN_TIMEOUT_MS)
+
+  try {
+    const response = await fetch(`${DEEPSEEK_API_BASE}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.8,
+        max_tokens: 4096,
+      }),
+      signal: controller.signal,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '')
+      throw new Error(`DeepSeek API returned ${response.status}: ${errorText.slice(0, 300)}`)
+    }
+
+    const payload = await response.json() as {
+      choices?: Array<{ message?: { content?: string } }>
+    }
+
+    const content = payload.choices?.[0]?.message?.content
+    if (!content) {
+      throw new Error('DeepSeek API returned no content')
+    }
+
+    return content
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+function isDeepSeekSessionRequest(value: unknown): value is { contestants: StaticContestantSeed[] } {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  return Array.isArray((value as Record<string, unknown>).contestants)
 }
 
 async function handleLocalOpenClawBridgeRequest(
@@ -254,7 +409,7 @@ async function runContestantPrompt(
 }
 
 function resolveLegacyAgentId(contestantId: string, contestantIndex: number) {
-  return LOCAL_OPENCLAW_AGENT_MAP[contestantId] ?? `contestant-${String(contestantIndex + 1).padStart(2, '0')}`
+  return (LOCAL_OPENCLAW_AGENT_MAP as Record<string, string>)[contestantId] ?? `contestant-${String(contestantIndex + 1).padStart(2, '0')}`
 }
 
 async function runOpenClawCommand(label: string, args: string[], timeout: number) {

@@ -67,7 +67,7 @@ describe('art session', () => {
     expect(session.contestants).toEqual(contestants)
     expect(session.turns).toHaveLength(contestants.length * 2)
     expect(session.turns[0]?.id).toBe('jade-foundation-0')
-    expect(session.turns.at(-1)?.id).toBe('nova-detail-7')
+    expect(session.turns.at(-1)?.id).toBe('echo-detail-15')
     expect(session.turns[0]?.collaborationRole).toBe('introduce')
     expect(session.turns.every((turn) => turn.responseSummary.length > 0)).toBe(true)
     expect(session.turns.every((turn) => turn.focusArea.length > 0)).toBe(true)
@@ -141,6 +141,8 @@ describe('art session', () => {
       ...original,
       poem: '金属雨沿着屋脊翻涌\n信号塔把雾切成脉冲\n整座城市都在等待第二次闪烁',
       drawingPrompt: '改成高反差脉冲和离散光点，让上方天空更像通电后的夜。',
+      motif: '金属脉冲',
+      strategyHint: '用山脊轮廓和脉冲节奏取代原先的平铺叙事。',
     }
 
     const originalProfile = deriveArtProfile(original)

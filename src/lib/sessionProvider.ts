@@ -8,6 +8,10 @@ import {
   buildLocalOpenClawRequest,
   fetchLocalOpenClawContestants,
 } from './localOpenClaw'
+import {
+  DEEPSEEK_PROVIDER_ID,
+  fetchDeepSeekSession,
+} from './deepseek'
 import type {
   ArtSessionDraft,
   ArtSessionProvider,
@@ -76,11 +80,21 @@ export const localOpenClawSessionProvider: ArtSessionProvider = {
   },
 }
 
+export const deepseekSessionProvider: ArtSessionProvider = {
+  id: DEEPSEEK_PROVIDER_ID,
+  label: 'DeepSeek Pixel Provider',
+  mode: 'deepseek',
+  async generateSession(contestants = defaultContestants) {
+    return fetchDeepSeekSession(contestants)
+  },
+}
+
 export const sessionProviders: Record<string, ArtSessionProvider> = {
   [localDeterministicSessionProvider.id]: localDeterministicSessionProvider,
   [staticIngestSessionProvider.id]: staticIngestSessionProvider,
   [draftSessionProvider.id]: draftSessionProvider,
   [localOpenClawSessionProvider.id]: localOpenClawSessionProvider,
+  [deepseekSessionProvider.id]: deepseekSessionProvider,
 }
 
 export function resolveSessionProvider(providerId: string | null | undefined) {
@@ -138,6 +152,10 @@ export async function loadSessionFromSearch(search: string): Promise<CoCreationS
   }
 
   if (provider.id === localOpenClawSessionProvider.id) {
+    return provider.generateSession(defaultContestants)
+  }
+
+  if (provider.id === deepseekSessionProvider.id) {
     return provider.generateSession(defaultContestants)
   }
 
@@ -469,7 +487,8 @@ function isSessionMode(value: string): value is SessionMode {
     value === 'static-ingest' ||
     value === 'draft' ||
     value === 'local-openclaw' ||
-    value === 'remote-openclaw'
+    value === 'remote-openclaw' ||
+    value === 'deepseek'
   )
 }
 

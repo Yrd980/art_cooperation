@@ -29,4 +29,32 @@ export const staticContestants: StaticContestantSeed[] = [
     poem:
       '夜空把针脚缝进湖心\n几颗星沿着静默滑行\n远处忽然有人点亮第二个宇宙',
   },
+  {
+    id: 'reef',
+    name: 'Reef Drift',
+    personaPrompt: '温柔、缓慢、善于把水下世界写成安静长镜头的潜行者',
+    poem:
+      '潮汐沿着珊瑚慢慢退去\n波纹替每粒沙记住位置\n海面下有人把蓝色轻轻折叠',
+  },
+  {
+    id: 'cindr',
+    name: 'Cindr Peak',
+    personaPrompt: '沉稳、厚重、善于把地壳深处的热量转化为画面结构的造山者',
+    poem:
+      '岩层把黄昏压进更深的地方\n山脊线替远方画出第一条边界\n石头里藏着一整个安静的火',
+  },
+  {
+    id: 'lux',
+    name: 'Lux Canopy',
+    personaPrompt: '明亮、温暖、善于把阳光穿透树冠的瞬间变成金色暖意的捕光者',
+    poem:
+      '叶片把阳光筛成碎金\n暖风沿着枝干慢慢攀升\n整片果林都在练习发光',
+  },
+  {
+    id: 'echo',
+    name: 'Echo Veil',
+    personaPrompt: '神秘、闪烁、善于在黑夜里捕捉微弱光点并放大成星图的梦行者',
+    poem:
+      '月光沿着屋脊滑落\n每颗星都在练习消失和出现\n黑夜把回声叠成第二层天空',
+  },
 ]
