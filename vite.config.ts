@@ -61,6 +61,11 @@ const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 const generatedDraftDirectoryPath = path.join(projectRoot, 'public', 'session-drafts', 'generated')
 
 export default defineConfig({
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+  },
   plugins: [react(), localOpenClawBridgePlugin(), deepseekBridgePlugin()],
 })
 
